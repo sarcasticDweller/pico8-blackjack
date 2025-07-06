@@ -25,7 +25,7 @@ end
 function Animator.__tostring(animator)
     local to_print = ""
     for _, frame in ipairs(animator.frames) do 
-        to_print = to_print .. tostr(card) .. "\n"
+        to_print = to_print .. tostr(frame) .. "\n"
     end
     return to_print
 end
