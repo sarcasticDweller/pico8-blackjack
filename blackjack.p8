@@ -1,5 +1,24 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
+__lua__
+#include cards.p8
+#include decks.p8
+#include animator.p8
+#include frames.p8
+printh("Starting program")
+print("starting program")
+
+local deck = Deck:new(standard_52_card_deck_face_down)
+local hand = Deck:new(empty_deck)
+local discard = Deck:new(empty_deck)
+
+deck:shuffle()
+printh(deck)
+
+hand:add_card(deck:draw_card(), false)
+hand:add_card(deck:draw_card(), true)
+print("dealer's hand:")
+print(hand)
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
