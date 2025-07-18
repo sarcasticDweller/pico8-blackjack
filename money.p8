@@ -2,16 +2,22 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 
-BettingPool = {}
-function BettingPool:new()
-    local new_betting_pool = {}
-    setmetatable(new_betting_pool, self)
-    new_betting_pool.__index = self
-
-    new_betting_pool.bets = {}
-    return new_betting_pool 
-end
-
-function BettingPool:add_bet(value, payout)
-    add(self.bets, {value, payout})
-end
+Bet = {
+    new = function(s, value, payout)
+        if type(value) ~= "number" or type(payout) ~= "number" then
+            printh("error: invalid bet data given")
+        end
+        local new_bet = {}
+        setmetatable(new_bet, s)
+        new_bet.__index = s
+        new_bet.value = value
+        new_bet.payout = payout
+        return new_bet
+    end,
+    win = function(s)
+        return s.value * s.payout
+    end,
+    tie = function(s)
+        return s.value
+    end
+}

@@ -8,24 +8,19 @@ __lua__
 
 function _init()
     printh("starting cart")
-    t, f, s = 0, 1, 4
-    card_anim = Animation:new(CardFlipBackFront)
-    done = false
+    deck = Deck:new(standard_52_card_deck_face_down)
+    discard = Deck:new(empty_deck)
+    player_hand = Deck:new(empty_deck)
+    dealer_hand = Deck:new(empty_deck)
+    deck:shuffle()
+    dealer_hand:add_card(deck:draw_card(), true)
+    dealer_hand:add_card(deck:draw_card(), false)
+    printh(dealer_hand:get_value())
 
 end
-function _update()
-    t = (t + 1) % s -- forward tick
+function update()
 end
-function _draw()
-    if t % 10 == 0 do
-        cls()
-        map(0,0)
-        if not done do 
-            done = card_anim:play_until_done(10, 10)
-        else
-            card_anim:draw_last_frame(10, 10)
-        end
-    end
+function draw()
 end
 
 __gfx__
