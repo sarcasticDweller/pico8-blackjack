@@ -54,12 +54,20 @@ AnimatorController = {
         setmetatable(controller, s)
         s.__index = s
 
-        s.anim_currently_playing = nil 
+        anim_currently_playing = nil 
+        default_anim = nil
 
         return controller
     end,
     add_anim = function(s, key, value)
         s[key] = value
+    end,
+    set_default_anim = function(s, key)
+        if s[key] == nil then
+            printh("warning: attempted to set default animation to invalid animation")
+            return
+        end
+        s.default_anim = s[key]
     end,
 
     start_anim = function(s, key)
@@ -73,7 +81,10 @@ AnimatorController = {
     play_anim = function(s, dt, dx, dy)
         if s.anim_currently_playing ~= nil then
             local playing = s.anim_currently_playing:play_until_done(dt, dx, dy)
-            if (not playing) s.anim_currently_playing = nil
+            if not playing then
+                s.anim_currently_playing = nil
+                s.default_anim:play_until_done(dt, dx, dy)
+            end
         else
             -- play default animation
         end

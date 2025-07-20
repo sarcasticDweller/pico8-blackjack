@@ -16,7 +16,10 @@ function _init()
     deck:shuffle()
 
     cardimations = AnimatorController:new()
-    cardimations:add_anim("flip", Animation:new(CardFlipBackFront))
+    cardimations:add_anim("flip front back", Animation:new(CardFlipBackFront))
+    cardimations:add_anim("front", Animation:new(CardFront))
+    cardimations:add_anim("back", Animation:new(CardBack))
+    cardimations:set_default_anim("front")
     dt = 0
 
     printh("init complete")
@@ -24,7 +27,7 @@ end
 function _update()
     dt += 1
     if (dt > framerate) dt = 0
-    if (btnp(4)) cardimations:start_anim("flip")
+    if (btnp(4)) cardimations:start_anim("flip front back")
 end
 function _draw()
     cls()
