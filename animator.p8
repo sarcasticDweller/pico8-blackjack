@@ -4,18 +4,24 @@ __lua__
 
 Animation = {
     new = function(s, frames_set)
-        local error_frames_set = {8, 0, 18, 7, 0, 0} 
-        local frames = frames_set
         if type(frames_set) ~= "table" then
             printh("error: invalid frame data passed: '" .. tostr(frames_set) .. "' frame data must be in the form of a table")
-            frames = error_frames_set
+            return
         end
+        if frames_set[1].framerate == nil then
+            printh("error: missing animation metadata")
+            return
+        end
+
+        local metadata = frames_set[1]
+        deli(frames_set, 1)
 
         local new_anim = {}
         setmetatable(new_anim, s)
         s.__index = s
 
-        new_anim.frames = frames
+        new_anim.frames = frames_set
+        new_anim.framerate = metadata.framerate
         new_anim.current_frame = 1
         return new_anim
     end,
@@ -28,13 +34,12 @@ Animation = {
         end
         return to_print
     end,
-    play_until_done = function(s, dx, dy) -- returns done state
+    play_until_done = function(s, dt, dx, dy) -- returns playing state
         s:draw_frame(s.frames[s.current_frame], dx, dy)
-        s.current_frame += 1
-        if (s.current_frame >= #s.frames) return true
-        return false
+        if (dt % s.framerate == 0) s.current_frame += 1
+        return s.current_frame <= #s.frames
     end,
-    draw_frame = function(f, dx, dy)
+    draw_frame = function(s, f, dx, dy)
         sspr(f.x, f.y, f.w, f.h, dx + f.x_m, dy + f.y_m)
     end,
     draw_last_frame = function(s, dx, dy)
@@ -42,21 +47,43 @@ Animation = {
     end
 }
 
-Animator = {
-    new = function(s, animations)
-        animation_set = animations
-        if type(animations) ~= "table" then
-            printh("error: invalid animation data passed: '" .. tostr(animations) .. "' animation data must be in the form of a table")
-            animation_set = {}
+AnimatorController = {
+    -- holds a collection of animations and monitors the state of them
+    new = function(s)
+        local controller = {}
+        setmetatable(controller, s)
+        s.__index = s
+
+        local anim_currently_playing = nil 
+
+        return controller
+    end,
+    add_anim = function(s, key, value)
+        s[key] = value
+    end,
+
+    start_anim = function(s, key)
+        if s[key] == nil or s.anim_currently_playing ~= nil then
+            printh("warning: animation blocked from starting")
+            return -- do not start an animation
         end
+        s.anim_currently_playing = s[key]
+        s.anim_currently_playing.current_frame = 1 -- restart animation
+    end,
+    play_anim = function(s, dt, dx, dy)
+        if (s.anim_currently_playing == nil) return
+        local playing = s.anim_currently_playing:play_until_done(dt, dx, dy)
+        if (not playing) s.anim_currently_playing = nil
 
-
-        local new_animator = {}
-        setmetatable(new_animator, s)
-        new_animator.__index = s
-
-        new_animator.animations = animation_set
-        new_animator.animation_playing = 1 
-        return new_animator
     end
 }
+
+
+
+function draw_deck(card_frame, dx, dy)
+    f = card_frame
+    sspr(f.x, f.y, f.w, f.h, dx, dy + 2)
+    sspr(f.x, f.y, f.w, f.h, dx, dy + 1)
+    sspr(f.x, f.y, f.w, f.h, dx, dy)
+
+end
