@@ -54,7 +54,7 @@ AnimatorController = {
         setmetatable(controller, s)
         s.__index = s
 
-        local anim_currently_playing = nil 
+        s.anim_currently_playing = nil 
 
         return controller
     end,
@@ -71,10 +71,12 @@ AnimatorController = {
         s.anim_currently_playing.current_frame = 1 -- restart animation
     end,
     play_anim = function(s, dt, dx, dy)
-        if (s.anim_currently_playing == nil) return
-        local playing = s.anim_currently_playing:play_until_done(dt, dx, dy)
-        if (not playing) s.anim_currently_playing = nil
-
+        if s.anim_currently_playing ~= nil then
+            local playing = s.anim_currently_playing:play_until_done(dt, dx, dy)
+            if (not playing) s.anim_currently_playing = nil
+        else
+            -- play default animation
+        end
     end
 }
 
