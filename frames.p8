@@ -34,6 +34,7 @@ CardFlipFrontBack = {
 CardFront = {
     {framerate = 30},
     {x = 41, y = 32, w = 10, h = 12, x_m = 0, y_m = 0},
+    {x = 41, y = 32, w = 10, h = 12, x_m = 0, y_m = 0},
 }
 CardBack = {
     {framerate = 30},
